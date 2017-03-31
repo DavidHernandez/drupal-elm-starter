@@ -1,4 +1,0 @@
-title,field_image
-Kitchen,kitchen.jpg
-West Garden,west-garden.jpg
-<script>alert('XSS');</script>XSS Test,kitchen.jpg

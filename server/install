@@ -119,14 +119,11 @@ if [ ! $UNATTENDED ]; then
 fi
 
 
-# Cleanup contrib modules, themes & libraries from the profile directory.
-delete_profile_contrib
-
 # Cleanup the sites/default content.
 delete_sites_default_content
 
-# Cleanup the www directory.
-delete_www_content
+# Cleanup the web directory.
+delete_web_content
 
 # Run the build script (drush make + extra's).
 drupal_make
@@ -134,12 +131,8 @@ drupal_make
 # Symlink extra modules (if any).
 symlink_externals
 
-
 # Install the Drupal profile as defined in the config.sh file.
 install_drupal_profile
-
-# Composer install
-composer_install
 
 # Setup the files directory.
 create_sites_default_files_directory
@@ -158,7 +151,7 @@ fi
 
 
 # Check if we have a working bootstrap.
-cd $ROOT/www
+cd $ROOT/web
 BOOTSTRAP_SUCCESS=`drush status grep "Drupal bootstrap" | grep "Successful"`
 cd $ROOT
 

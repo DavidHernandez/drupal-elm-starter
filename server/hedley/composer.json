@@ -1,0 +1,39 @@
+{
+    "name": "gizra/hedley",
+    "description": "Hedley",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "",
+            "role": ""
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "pfrenssen/phpcs-pre-push",
+                "version": "1.0",
+                "type": "git-hook",
+                "source": {
+                    "url": "https://gist.github.com/498fc52fea3f965f6640.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+        {
+            "type": "vcs",
+            "url": "https://git.drupal.org/project/phingdrushtask.git"
+        }
+    ],
+    "require": {
+        "drupal/jsonapi": "^1.0-beta1"
+    }
+}
+

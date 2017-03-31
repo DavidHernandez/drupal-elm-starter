@@ -16,7 +16,7 @@ PROFILE_TITLE="Hedley"
 
 
 # Modify the URL below to match your local domain the site will be accessible on.
-BASE_DOMAIN_URL="http://localhost/drupal-elm-starter/server/www"
+BASE_DOMAIN_URL="http://localhost/drupal-elm-starter/server/web"
 
 
 # Modify the login details below to be the desired
@@ -35,18 +35,18 @@ MYSQL_DB_NAME="drupal_elm_starter"
 
 
 ##
-# External folders or files that need to be symlinked into the www folder
+# External folders or files that need to be symlinked into the web folder
 # AFTER the make files have been processed.
 #
 # The variable is an array, add each with an unique index number.
 # Each line should contain the source path > target path.
-# The target path needs to be relative to the www folder (Drupal root).
+# The target path needs to be relative to the web folder (Drupal root).
 #
 # Example:
-#   SYMLINKS[0]="path/to/the/source/folder>subpath/of/the/www-folder"
+#   SYMLINKS[0]="path/to/the/source/folder>subpath/of/the/web-folder"
 ##
-# SYMLINKS[0]="/var/www/library/foldername>sites/all/library/foldername"
-# SYMLINKS[1]="/var/www/shared/filename.php>sites/all/modules/filename.php"
+# SYMLINKS[0]="/var/web/library/foldername>sites/all/library/foldername"
+# SYMLINKS[1]="/var/web/shared/filename.php>sites/all/modules/filename.php"
 
 
 
@@ -69,13 +69,14 @@ MYSQL_DB_NAME="drupal_elm_starter"
 
 # Post install script.
 function post_install {
-  chmod 777 www/sites/default/settings.php
+  chmod 777 web/sites/default/settings.php
 
+  # TODO this will need to be updated
   # Pusher integration.
-  echo "\$conf['hedley_pusher_app_id'] = 'pusher_app_id';"  >> www/sites/default/settings.php
-  echo "\$conf['hedley_pusher_app_key'] = 'pusher_app_key';"  >> www/sites/default/settings.php
-  echo "\$conf['hedley_pusher_app_secret'] = 'pusher_app_secret';"  >> www/sites/default/settings.php
-  echo "\$conf['hedley_pusher_app_cluster'] = 'pusher_app_cluster';"  >> www/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_id'] = 'pusher_app_id';"  >> web/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_key'] = 'pusher_app_key';"  >> web/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_secret'] = 'pusher_app_secret';"  >> web/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_cluster'] = 'pusher_app_cluster';"  >> web/sites/default/settings.php
 }
 
 # Post upgrade script.
@@ -83,11 +84,11 @@ function post_install {
 
 # Post reset script.
 function post_reset {
-  chmod 777 www/sites/default/settings.php
+  chmod 777 web/sites/default/settings.php
 
   # Pusher integration.
-  echo "\$conf['hedley_pusher_app_id'] = '<your-app-id>';"  >> www/sites/default/settings.php
-  echo "\$conf['hedley_pusher_app_key'] = '<your-app-key>';"  >> www/sites/default/settings.php
-  echo "\$conf['hedley_pusher_app_secret'] = '<your-app-secret>';"  >> www/sites/default/settings.php
-  echo "\$conf['hedley_pusher_app_cluster'] = '<your-app-cluster>';"  >> www/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_id'] = '<your-app-id>';"  >> web/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_key'] = '<your-app-key>';"  >> web/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_secret'] = '<your-app-secret>';"  >> web/sites/default/settings.php
+  echo "\$conf['hedley_pusher_app_cluster'] = '<your-app-cluster>';"  >> web/sites/default/settings.php
 }

@@ -9,8 +9,8 @@
 ##
 # Before doing anything, make sure that new Drush commands will be recognized.
 ##
-if [[ -d $ROOT/www ]]; then
-  drush -q -r $ROOT/www cc drush
+if [[ -d $ROOT/web ]]; then
+  drush -q -r $ROOT/web cc drush
 fi
 
 ##
@@ -77,87 +77,42 @@ function check_config_file {
 # Uses (requests) sudo powers if needed!
 ##
 function delete_sites_default_content {
-  # Cleanup the www/sites/default content.
-  if [ -d $ROOT/www/sites ]; then
+  # Cleanup the web/sites/default content.
+  if [ -d $ROOT/web/sites ]; then
     echo -e "${LBLUE}> Cleaning up the sites/default directory${RESTORE}"
-    chmod 777 $ROOT/www/sites/default
-    rm -rf $ROOT/www/sites/default/files
-    rm -f $ROOT/www/sites/default/settings.php
+    chmod 777 $ROOT/web/sites/default
+    rm -rf $ROOT/web/sites/default/files
+    rm -f $ROOT/web/sites/default/settings.php
     echo
   fi
 
   # Backup in case of we need sudo powers to get rid of the files directory.
-  if [ -d $ROOT/www/sites/default/files ]; then
+  if [ -d $ROOT/web/sites/default/files ]; then
     echo -e "${LBLUE}> Cleaning up the sites/default/files directory with sudo power!${RESTORE}"
-    sudo rm -rf $ROOT/www/sites/default/files
+    sudo rm -rf $ROOT/web/sites/default/files
     echo
   fi
 
   # Backup in case of we need sudo powers to get rid of the settings.php directory.
-  if [ -f $ROOT/www/sites/default/settings.php ]; then
+  if [ -f $ROOT/web/sites/default/settings.php ]; then
     echo -e "${LBLUE}> Cleaning up the sites/default/settings.php file with sudo power!${RESTORE}"
-    sudo rm -rf $ROOT/www/sites/default/settings.php
+    sudo rm -rf $ROOT/web/sites/default/settings.php
     echo
   fi
 }
 
 
 ##
-# Cleanup the profile/ directory:
-# - Remove contributed modules (modules/contrib).
-# - Remove development modules (modules/development).
-# - Remove contributed themes (themes/contrib).
-# - Remove libraries (libraries).
+# Delete all the content within the /web folder.
 ##
-function delete_profile_contrib {
-  # Cleanup the contrib modules
-  if [ -d $ROOT/$PROFILE_NAME/modules/contrib ]; then
-    echo -e "${LBLUE}> Cleaning up the $PROFILE_NAME/modules/contrib directory${RESTORE}"
-    rm -rf $ROOT/$PROFILE_NAME/modules/contrib
-    echo
+function delete_web_content {
+  if [ -d $ROOT/web/sites/default ]; then
+    chmod 777 $ROOT/web/sites/default
   fi
 
-  # Cleanup the development modules
-  if [ -d $ROOT/$PROFILE_NAME/modules/development ]; then
-    echo -e "${LBLUE}> Cleaning up the $PROFILE_NAME/modules/development directory${RESTORE}"
-    rm -rf $ROOT/$PROFILE_NAME/modules/development
-    echo
-  fi
-
-  # Cleanup the contrib themes
-  if [ -d $ROOT/$PROFILE_NAME/themes/contrib ]; then
-    echo -e "${LBLUE}> Cleaning up the $PROFILE_NAME/themes/contrib directory${RESTORE}"
-    rm -rf $ROOT/$PROFILE_NAME/themes/contrib
-    echo
-  fi
-
-  # Cleanup the libraries folder
-  if [ -d $ROOT/$PROFILE_NAME/libraries ]; then
-    echo -e "${LBLUE}> Cleaning up the $PROFILE_NAME/libraries directory${RESTORE}"
-    rm -rf $ROOT/$PROFILE_NAME/libraries
-    echo
-  fi
-}
-
-
-##
-# Delete all the content within the /www folder.
-##
-function delete_www_content {
-  if [ -d $ROOT/www/sites/default ]; then
-    chmod 777 $ROOT/www/sites/default
-  fi
-
-  if [ -d $ROOT/www/sites ]; then
-    echo -e "${LBLUE}> Cleaning up the www directory${RESTORE}"
-    rm -rf $ROOT/www/
-    echo
-  fi
-
-  # Create the www directory if necessary.
-  if [ ! -d $ROOT/www ]; then
-    echo -e "${LBLUE}> Creating an empty www directory${RESTORE}"
-    mkdir $ROOT/www
+  if [ -d $ROOT/web/sites ]; then
+    echo -e "${LBLUE}> Cleaning up the web directory${RESTORE}"
+    rm -rf $ROOT/web/
     echo
   fi
 }
@@ -179,7 +134,7 @@ function drupal_make {
 function install_drupal_profile {
   echo -e "${LBLUE}> Install Drupal with the $PROFILE_NAME install profile${RESTORE}"
 
-  cd $ROOT/www
+  cd $ROOT/web
   drush si -y $PROFILE_NAME \
     --locale=en \
     --site-name="$PROFILE_TITLE" \
@@ -195,32 +150,19 @@ function install_drupal_profile {
 
 
 ##
-# Composer install.
-##
-function composer_install {
-  echo -e "${LBLUE}> Composer install${RESTORE}"
-
-  cd $ROOT/www/sites/default/files/composer
-  composer install
-  echo
-
-  cd $ROOT
-}
-
-##
 # Create (if not exists) and set the proper file permissions
 # on the sites/default/files directory.
 ##
 function create_sites_default_files_directory {
-  if [ ! -d $ROOT/www/sites/default/files ]; then
+  if [ ! -d $ROOT/web/sites/default/files ]; then
     echo -e "${LBLUE}> Create the files directory (sites/default/files directory)${RESTORE}"
-    mkdir -p $ROOT/www/sites/default/files
+    mkdir -p $ROOT/web/sites/default/files
   fi
 
   echo -e "${LBLUE}> Set the file permissions on the sites/default/files directory${RESTORE}"
-  chmod -R 777 $ROOT/www/sites/default/files
-  umask 000 $ROOT/www/sites/default/files
-  chmod -R g+s $ROOT/www/sites/default/files
+  chmod -R 777 $ROOT/web/sites/default/files
+  umask 000 $ROOT/web/sites/default/files
+  chmod -R g+s $ROOT/web/sites/default/files
   echo
 }
 
@@ -230,7 +172,7 @@ function create_sites_default_files_directory {
 ##
 function enable_development_modules {
   echo -e "${LBLUE}> Enabling the development modules${RESTORE}"
-  cd $ROOT/www
+  cd $ROOT/web
   drush en -y devel views_ui field_ui
   cd $ROOT
   echo
@@ -241,10 +183,11 @@ function enable_development_modules {
 ##
 function convert_csv_to_sql {
   echo -e "${LBLUE}> Converting csv migration files to sql tables${RESTORE}"
-  cd $ROOT/www
+  cd $ROOT/web
   CSV2SQL=`drush | grep "csv2sql"`
 
   if [ ! "$CSV2SQL" ]; then
+    # TODO this will need to be updated too.
     drush dl csv2sql --yes
   fi
 
@@ -261,7 +204,7 @@ function convert_csv_to_sql {
 ##
 function import_demo_content {
   echo -e "${LBLUE}> Importing demo data${RESTORE}"
-  cd $ROOT/www
+  cd $ROOT/web
 
   # Check if migrate module is available
   MIGRATE_UI=$(drush pm-list --pipe --type=module | grep "^migrate_ui$")
@@ -312,16 +255,16 @@ function fill_string_spaces {
 # the Administrator.
 ##
 function drupal_login {
-  cd www
+  cd web
   drush uli --uri=$BASE_DOMAIN_URL
   cd ..
 }
 
 ##
-# Symlink external folders into www folder.
+# Symlink external folders into web folder.
 #
 # This will use the SYMLINKS array from the config.sh file and create
-# the symlinks relative to the www folder in the folder structure.
+# the symlinks relative to the web folder in the folder structure.
 ##
 function symlink_externals {
   echo -e "${LBLUE}> Symlinking external directories & files${RESTORE}"
@@ -335,7 +278,7 @@ function symlink_externals {
   for SOURCETARGET in "${SYMLINKS[@]}"; do
     paths=($(echo $SOURCETARGET | tr ">" "\n"))
     path_source=${paths[0]}
-    path_target="$ROOT/www/${paths[1]}"
+    path_target="$ROOT/web/${paths[1]}"
     basepath_target=${path_target%/*}
 
     # check if the source exists
